@@ -1,0 +1,1 @@
+export type IStatus = 'autenticado' | 'noAutenticado' | 'checking';
