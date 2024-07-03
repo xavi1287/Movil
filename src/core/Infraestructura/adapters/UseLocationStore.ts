@@ -4,17 +4,24 @@ import { Location } from "../../../presentation/components/Mapa";
 import { getCurrentLocation } from "../../../actions/location/location";
 
 interface LocationState {
-    lastKnowLocation: Location|null;
+    actualUserLocation: Location|null;
+    finalUserLocation: Location|null;
 
     getLocation(): Promise<Location|null>;
+    saveFinalUserLocation( ubicacion: Location ): void;
 }
 
 export const useLocationStore = create<LocationState>()( (set, get) => ({
-    lastKnowLocation: null,
+    actualUserLocation: null,
+    finalUserLocation: null,
 
     getLocation: async() => {
         const location = await getCurrentLocation();
-        set({ lastKnowLocation: location });
+        set({ actualUserLocation: location });
+        set({ finalUserLocation: location });
         return location;
+    },
+    saveFinalUserLocation: ( ubicacion: Location ) => {
+        set({ finalUserLocation: ubicacion });
     }
 }))

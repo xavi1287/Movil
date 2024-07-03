@@ -1,5 +1,5 @@
 import { Button, Text } from '@ui-kitten/components';
-import { DimensionValue } from 'react-native';
+import { DimensionValue, PixelRatio } from 'react-native';
 import { MyIcon } from './ui/MyIcon';
 
 interface Props {
@@ -83,7 +83,7 @@ const PrimaryButton = ({
                 <Text
                     {...props} style={{ 
                         color: textColor, 
-                        fontSize: textSize,
+                        fontSize: textSize * PixelRatio.getFontScale(),
                         paddingRight: showIcon && iconPosition === 'right' ? 10 : 0,
                         paddingLeft: showIcon && iconPosition === 'left' ? 10 : 0,
                         fontWeight: 'bold',

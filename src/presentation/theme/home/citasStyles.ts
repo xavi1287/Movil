@@ -5,7 +5,8 @@ export const citasStyles = StyleSheet.create({
     containerCitas: {
         backgroundColor: globalColors.white,
         marginLeft: 20,
-        marginBottom: 30,
+        marginRight: 20,
+        marginBottom: 20,
     },
     titleCitas: {
         // marginTop: -10,
@@ -17,7 +18,6 @@ export const citasStyles = StyleSheet.create({
     containerCardCitas: {
         backgroundColor: '#F5F4F4',
         borderRadius: 15,
-        width: 360,
         height: 170,
         alignItems: 'center',
         justifyContent: 'space-around',
@@ -34,7 +34,8 @@ export const citasStyles = StyleSheet.create({
         justifyContent: 'center',
     },
     textDetalleCita: {
-        color:'#828282'
+        color:'#828282',
+        fontSize: 13
     },
     shapeSpot:{
         width: 12,
@@ -69,8 +70,82 @@ export const citasStyles = StyleSheet.create({
     },
     textHora: {
         color:'#265170',        
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: '700'
-    }
-    
+    },
+
+    // Styles CitasCardScrollVertical
+    containerCitasVertical: {
+        backgroundColor: globalColors.white,
+        marginTop: 20
+    },
+    titleCitasVertical: {
+        color: globalColors.darkSmoke,
+        fontSize: 18,
+        fontWeight: '700',
+        marginTop: 20,
+        marginBottom: 20
+    },
+    containerCardCitasVertical: {
+        backgroundColor: '#F5F4F4',
+        borderRadius: 15,
+        width: '100%',
+        height: 170,
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        flexDirection: 'column',
+        marginBottom: 20
+    },
+    containerCardCitasDefault: {
+        backgroundColor: '#F5F4F4',
+        borderRadius: 15,
+        width: '100%',
+        height: 170,
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        flexDirection: 'row',
+    },
+    containerInformacion:{
+        borderRadius: 15,
+        backgroundColor: '#F5F4F4',
+        width: '100%',
+        height: '60%',
+        padding: 10,
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        flexDirection: 'row',
+    },
+    informacionLeft:{
+        backgroundColor: '#F5F4F4',
+        width: '60%',
+        height: '100%',
+        paddingLeft: 10,
+        paddingRight: 5,
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+    },
+    informacionRight:{
+        backgroundColor: '#F5F4F4',
+        width: '40%',
+        height: '100%',
+        // paddingRight: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    containerHoraVertical: {
+        backgroundColor: '#F5F4F4',
+        // marginBottom: 10,
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+    },
+    containerButtons:{
+        borderRadius: 15,
+        backgroundColor: '#F5F4F4',
+        width: '100%',
+        height: '40%',
+        padding: 10,
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        flexDirection: 'row',
+    },
 });

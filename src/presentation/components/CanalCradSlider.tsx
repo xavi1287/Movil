@@ -31,7 +31,9 @@ export const CanalCradSlider = () => {
                 >
                     <Layout
                         style={{
-                            backgroundColor: item.colorFondo
+                            backgroundColor: item.colorFondo,
+                            width: '40%',
+                            alignItems: 'center',
                         }}
                     >
                         <Image
@@ -44,13 +46,14 @@ export const CanalCradSlider = () => {
                         style={{
                             backgroundColor: item.colorFondo,
                             alignItems: 'center',
-                            justifyContent: 'center'
+                            justifyContent: 'center',
+                            width: '60%'
                         }}
                     >
                     <Text
                         style={{
                             textAlign: 'center',
-                            maxWidth: "90%",
+                            maxWidth: "100%",
                             padding: 10,
                             color: 'white'
                         }}
@@ -59,7 +62,7 @@ export const CanalCradSlider = () => {
                         label="Empezar"
                         buttonColor= "white"
                         appearance="filled"
-                        whithPercentaje="70%"
+                        whithPercentaje="80%"
                         height={50}
                         nameIcon="arrow-forward-outline"
                         colorIcon="color-primary-100"

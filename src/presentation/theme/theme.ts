@@ -18,12 +18,17 @@ export const globalStyles = StyleSheet.create({
         padding: 30,
         backgroundColor: globalColors.white,
     },
+    containerScrollView: {
+        flex: 1,
+        width: '100%',
+        backgroundColor: globalColors.white,
+    },
     containerAzul: {
         flex: 1,
         backgroundColor: globalColors.background,
     },
     titulosText: {
-        fontSize: 34,
+        fontSize: 30,
         fontWeight: 'bold',
         color: globalColors.dark,
     },

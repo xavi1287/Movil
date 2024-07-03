@@ -7,9 +7,7 @@ import { globalColors } from '../../theme/theme';
 
 export const HamburgerMenu = () => {
 
-
   const navigation = useNavigation();
-
 
   useEffect( () => {
     navigation.setOptions( {
@@ -17,12 +15,16 @@ export const HamburgerMenu = () => {
         <Pressable 
           style={{ marginLeft: 5 }}
           onPress={ () => navigation.dispatch( DrawerActions.toggleDrawer ) }>
-          <IonIcon name="menu-outline" color={ globalColors.white } />
+          <IonIcon 
+            name="menu-outline" 
+            size={30} 
+            color={ globalColors.white } 
+            paddingLeft={10}
+          />
         </Pressable>
       )
     } );
   }, [] );
-
 
   return (<></>);
 }

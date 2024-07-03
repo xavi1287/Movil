@@ -1,4 +1,5 @@
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import AnimatedLoading from './ui/AnimatedLoading';
 
 interface Props {
     isLoading?: boolean,
@@ -17,7 +18,8 @@ export const LoadingOverlay = ({
                 isLoading
                 ?
                     <View style={ styles.overlay }>
-                        <ActivityIndicator color='black' size='large' />
+                        {/* <ActivityIndicator color='black' size='large' /> */}
+                        <AnimatedLoading />
                     </View>
                 :
                     <></>

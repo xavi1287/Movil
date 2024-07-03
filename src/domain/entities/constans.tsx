@@ -14,7 +14,7 @@ export const bannerData: BannerDataTypes[] = [
     {
         bannerImageUrl: require('../../assets/imgs/Banner003.png'),
         title: 'Utiliza nuestro canal de Agendamiento Web.',
-        url: 'https://wabot.citas.med.ec/wa',
+        url: 'https://www.citas.med.ec/',
         colorFondo: '#5AA8DF'
     }
 ]

@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Input, Text } from '@ui-kitten/components';
 import { MyIcon } from './ui/MyIcon';
+import { color } from 'react-native-elements/dist/helpers';
 
 interface Props {
+    heightContariner?: number,
     label: string;
     placeholder: string;
     passwordText?: boolean;
     nameIcon?: string;
     colorIcon?: string;
+    colorInput?: string;
     esDeshabilitado?: boolean;
     tipo: 'default'| 'email-address'| 'numeric'| 'phone-pad'| 'decimal-pad'| 'url';
     value?: string;
@@ -18,16 +21,18 @@ interface Props {
 
 const TypeInput = (
     {
-        label,
-        placeholder,
-        passwordText = false,
-        nameIcon='',
-        colorIcon,
-        esDeshabilitado = false,
-        tipo,
-        value, // Now accepting value prop
-        onChangeText, // Now accepting onChangeText prop
-        showIcon = true,
+      heightContariner=125,
+      label,
+      placeholder,
+      passwordText = false,
+      nameIcon='',
+      colorIcon,
+      colorInput='#E9E9E9',
+      esDeshabilitado = false,
+      tipo,
+      value, // Now accepting value prop
+      onChangeText, // Now accepting onChangeText prop
+      showIcon = true,
     }: Props
 ) => {
   const [localValue, setLocalValue] = useState(value);
@@ -76,7 +81,7 @@ const TypeInput = (
   };
 
   return (
-    <View style={styles.container}>
+    <View style={{...styles.container, height: heightContariner}}>
       <Text style={styles.label}>{label}</Text>
       <Input
         disabled={ esDeshabilitado }
@@ -84,7 +89,7 @@ const TypeInput = (
         onChangeText={handleChange}
         placeholder={placeholder}
         textStyle={styles.inputTextStyle}
-        style={[styles.input, error ? styles.inputError : null]}
+        style={[styles.input, error ? styles.inputError : null, {backgroundColor: colorInput}]}
         accessoryRight={showIcon ? <MyIcon name={nameIcon} color={colorIcon} /> : undefined}
         keyboardType = {tipo}
         secureTextEntry={passwordText}
@@ -100,14 +105,14 @@ const TypeInput = (
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: 125,
+    // height: 125,
     alignSelf: 'center',
     backgroundColor: 'white'
     // marginTop: 50,
   },
   input: {
     borderRadius: 15,
-    backgroundColor: '#E9E9E9'
+    // backgroundColor: '#E9E9E9'
   },
   inputError: {
     borderColor: 'red',
@@ -119,7 +124,8 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: 10,
     // textAlign: 'center',
-    color: '#828282'
+    color: '#828282',
+    fontWeight: 'bold'
   },
   inputTextStyle: {
     minHeight: 53,

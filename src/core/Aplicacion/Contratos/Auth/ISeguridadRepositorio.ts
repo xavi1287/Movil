@@ -1,6 +1,12 @@
 
-
 import { LoginDto } from "../../Dto/LoginDto";
+import ResponseGlobal from "../../../Dominio/Auth/Response/ResponseGlobal";
+import { RecuperaClaveResponse } from "../../../Dominio/Auth/Response/RecuperaClaveResponse";
+import { EnvioNotificacionResponse } from '../../../Dominio/Auth/Response/EnvioNotificacionResponse';
+import type { SesionResponse } from "../../../Dominio/Auth/Response/SesionResponse";
+import { LogRequest } from '../../../Dominio/Log/Request/LogRequest';
+import type { LogResponse } from "../../../Dominio/Log/Response/LogResponse";
+
 /**
  * @summary Interface ISeguridadRepositorio
  */
@@ -16,8 +22,13 @@ export interface ISeguridadRepositorio {
      */
     loginRegistro(): Promise<LoginDto>;
     /**
-     * *Metodo para cerrar sesion
+     * *Metodo para recuperar clave del usuario
      */
-    logout(): Promise<any>;
+    recuperaClaveUsuarioXCedula( cedula: string ): Promise<ResponseGlobal<RecuperaClaveResponse>>; 
+    /**
+     * *Metodo para enviar notificación al usuario
+     */
+    enviaNotificacionUsuarioXCedula( cedula: string ): Promise<ResponseGlobal<EnvioNotificacionResponse>>; 
     
+
 }

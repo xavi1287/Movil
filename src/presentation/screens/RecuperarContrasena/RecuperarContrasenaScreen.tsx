@@ -10,17 +10,57 @@ import TypeInput from "../../components/TypeInput";
 import PrimaryButton from "../../components/PrimaryButton";
 import { useState } from "react";
 import { RootStackParams } from "../../routes/StackNavigator";
+import { ModalPopUp } from "../../components/ModalPopUp";
+import { verificaCedula } from "../../../shared/helpers";
+import SeguridadRepositorio from "../../../modules/Auth/SeguridadRepositorio";
 
 interface Props extends StackScreenProps<RootStackParams, 'RecuperarContrasenaScreen'> {}
 
 export const RecuperarContrasenaScreen = ({ navigation }:Props) => {
 
-    const [seEnvioMail, setSeEnvioMail] = useState<Boolean>(false)
+    const [cedulaUsuario, setCedulaUsuario] = useState('');
+    const [seEnvioMail, setSeEnvioMail] = useState<Boolean>(false);
 
     const {
         isLoadingData,
         setIsLoadingData,
+        abrirModal,
+        cerrarModal,
+        isModalVisible,
+        mensajePopUp,
+        setMensajePopUp
     } = useUtils();
+
+    const recuperaClaveUsuario = async() => {
+
+        if ( cedulaUsuario === '' ) {
+            setMensajePopUp('La cédula es requerida');
+            abrirModal();
+            return;
+        };
+
+        if ( !verificaCedula( cedulaUsuario ) ) {
+            setMensajePopUp('Cedula incorrecta');
+            abrirModal();
+            return;
+        }
+
+        setIsLoadingData(true);
+        const seguridadRepositorio = new SeguridadRepositorio();
+
+        const resp = await seguridadRepositorio.recuperaClaveUsuarioXCedula( cedulaUsuario );
+
+        if ( !resp.isSuccessful || !resp.data || resp.data.Resultado !== 0 ) {
+            setMensajePopUp ( (!resp.data || !resp.data.Mensaje ) ? 'No se pudo recuperar la contraseña': resp.data.Mensaje );
+            setIsLoadingData(false);
+            abrirModal();
+            return;
+        }
+
+        setIsLoadingData(false);
+        setSeEnvioMail(true);
+
+    }
 
     return (
         <LoadingOverlay isLoading={ isLoadingData } >
@@ -57,9 +97,9 @@ export const RecuperarContrasenaScreen = ({ navigation }:Props) => {
                                         Hemos enviado un correo con tu nueva contraseña al correo registrado
                                     </Text>
 
-                                    <Text style={{ ...globalStyles.primaryText, ...styles.textoCorreoUsuario }} >
+                                    {/* <Text style={{ ...globalStyles.primaryText, ...styles.textoCorreoUsuario }} >
                                         xxxxxxde@gmail.com
-                                    </Text>
+                                    </Text> */}
 
                                 </View>
                             :
@@ -72,8 +112,8 @@ export const RecuperarContrasenaScreen = ({ navigation }:Props) => {
                                         nameIcon="person-outline"
                                         colorIcon="#828282"
                                         tipo= 'numeric'
-                                        // value={ form.username }
-                                        // onChangeText={ (username) => setForm({ ...form, username })}
+                                        value={ cedulaUsuario }
+                                        onChangeText={ setCedulaUsuario }
                                     />
 
                                     <PrimaryButton label="Recuperar contraseña"
@@ -86,7 +126,7 @@ export const RecuperarContrasenaScreen = ({ navigation }:Props) => {
                                         textColor={'white'}
                                         textSize={ 18 }
                                         showIcon={ false }
-                                        onPress={ () => {} }
+                                        onPress={ () => recuperaClaveUsuario() }
                                     />
 
                                 </View>
@@ -116,6 +156,16 @@ export const RecuperarContrasenaScreen = ({ navigation }:Props) => {
                     </Layout>
                     
                 </Layout>
+
+                <ModalPopUp 
+                    titulo='Error'
+                    isModalVisible={ isModalVisible }
+                    descripcion={ mensajePopUp }
+                    onAcept={ (() => {
+                        cerrarModal();
+                    })}
+                />
+                
             </ScrollView>
         </LoadingOverlay>
     )

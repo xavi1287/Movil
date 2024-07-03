@@ -16,7 +16,7 @@ export const HandlerLogin = () => {
     const { loginState } = useAuthStore();
 
     const handleLogin = async () => {
-        console.log(form.username);
+        
         setLoading(true);
         const response = await loginState(form.username, form.password);
         if (!response) {
@@ -25,7 +25,7 @@ export const HandlerLogin = () => {
         setLoading(false);
     }
     const setUsername = (username: string) => {
-        console.log(form.username);
+        
         setform({ ...form, username });
         
     };

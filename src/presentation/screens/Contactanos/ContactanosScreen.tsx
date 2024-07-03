@@ -4,10 +4,7 @@ import call from 'react-native-phone-call';
 import PrimaryButton from "../../components/PrimaryButton";
 import { globalColors, globalStyles } from "../../theme/theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-
-
-
+import { CanGoBackHeader } from "../../components/shared/CanGoBackHeader";
 
 export const ContactanosScreen = () => {
   const { top } = useSafeAreaInsets();
@@ -25,13 +22,16 @@ export const ContactanosScreen = () => {
   };
 
   return (
+    
     <View style={{
       flex: 1,
       // paddingHorizontal: 20,
-      marginTop: top
+      marginTop: top,
+      backgroundColor: '#FAF9FC'
     }}>
+      <CanGoBackHeader parm={true}/>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={globalStyles.container}>
+        <View style={{...globalStyles.container, backgroundColor: '#FAF9FC'}}>
           <View style={styles.contenedorLogo}>
             <Image
 
@@ -67,9 +67,9 @@ export const ContactanosScreen = () => {
           />
         </View>
 
-        <View>
+        <View style={styles.imageFooter}>
           <Image
-
+            style={styles.logoImage}
             source={require('../../../assets/imgs/logoCallCenter.png')} />
         </View>
       </ScrollView>
@@ -86,8 +86,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
 
   },
-
-
   contenedorPrincipal: {
     flex: 1,
     borderTopStartRadius: 60,
@@ -113,7 +111,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#007bff',
     borderColor: '#007bff',
   },
-
-
+  imageFooter: {
+    // width: '100%',
+    height: 450
+  },
+  logoImage: {
+    flex: 1, // Make the image itself take all available space within the container
+    resizeMode: 'cover', // Maintain
+    width: '100%'
+  }
 });
 

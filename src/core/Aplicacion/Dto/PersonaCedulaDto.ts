@@ -1,6 +1,7 @@
 
 export interface PersonaCedulaDto {
     esRegistrado:          boolean;
+    puedeRegistrarse:      boolean;
     esFallecido:           boolean;
     personaId:             number;
     identificacion:        string;

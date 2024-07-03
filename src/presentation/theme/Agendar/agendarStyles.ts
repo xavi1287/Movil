@@ -3,10 +3,13 @@ import { globalColors } from "../theme";
 
 export const agendarStyles = StyleSheet.create({
     containerAgendar: {
+        flex: 1,
+        backgroundColor: globalColors.white,
+    },
+    containerScrollView: {
         flex: 1, 
-        alignItems: 'center',
-        backgroundColor: 'white',
-        margin: 20
+        width: '100%',
+        padding: 20
     },
     titulosAgendar: {
         color: '#828282',
@@ -14,6 +17,19 @@ export const agendarStyles = StyleSheet.create({
         textAlign: 'left',
         fontWeight: '700',
         marginBottom: 20
+    },
+    mensajeDiscapacidad: {
+        marginBottom: 10,
+        marginTop: 10,
+        borderRadius: 15,
+        padding: 15,
+        backgroundColor: '#EDF4FF',
+        color: '#828282',
+        textAlign: 'justify',
+    },
+    negrita: {
+        fontWeight: 'bold',
+        color: '#828282',
     },
     containerButtonGroup: {
         flexDirection: 'row',
@@ -46,7 +62,7 @@ export const agendarStyles = StyleSheet.create({
         marginBottom: 15
     },
     dataTexto:{
-        fontSize: 16,
+        fontSize: 13,
         color: globalColors.darkSmoke,
         paddingLeft: 20
     },

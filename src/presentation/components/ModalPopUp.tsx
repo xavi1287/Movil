@@ -1,14 +1,14 @@
 
-import { useState } from 'react'
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
-import { globalColors, globalStyles } from '../theme/theme'
+import { Modal, StyleSheet, Text, View, Linking } from 'react-native'
+import { globalColors } from '../theme/theme'
 import PrimaryButton from './PrimaryButton';
 
 interface Props {
     titulo: string,
     isModalVisible: boolean;
     descripcion?: string;
-    esModalConfirmacion?: boolean;
+    componente?: JSX.Element | null;
+    esModalConfirmacion?: boolean; // Si es true se usan los metodos onConfirm y onCancel, si es false onAcept
     onAcept?: () => void;
     onConfirm?: () => void;
     onCancel?: () => void;
@@ -18,12 +18,13 @@ export const ModalPopUp = ({
     titulo,
     isModalVisible = false,
     descripcion = '',
+    componente = null,
     esModalConfirmacion = false,
     onAcept = () => {},
     onConfirm = () => {},
     onCancel = () => {},
 }: Props) => {
-
+    
     return (
         <View style={ styles.contenedorPrincipal } >
             <Modal
@@ -40,9 +41,9 @@ export const ModalPopUp = ({
                             ?
                                 <></>
                             :
-                            <Text style={ styles.body }>{ descripcion }</Text> 
+                            <Text style={ styles.body }> {descripcion}</Text>                            
                         }
-
+                        {componente}
                         {
                             esModalConfirmacion
                             ?
@@ -56,7 +57,7 @@ export const ModalPopUp = ({
                                         height={ 55 }
                                         marginButton={ 0 }
                                         onPress={ onCancel }
-                                        buttonColor={ globalColors.primary }
+                                        buttonColor={ globalColors.darkSmoke }
                                         whithPercentaje={ '45%' }
                                     />
 

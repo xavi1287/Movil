@@ -3,9 +3,11 @@ import React from 'react'
 import { citasStyles } from '../theme/home/citasStyles'
 import PrimaryButton from './PrimaryButton'
 import { useDataStore } from '../../core/Infraestructura/adapters/UseDataStore'
-import { FlatList, Linking } from 'react-native'
+import { FlatList, Image, Linking, useWindowDimensions } from 'react-native'
 
 export const CitasCardScrollHorizontal = () => {
+
+    const { width, height } = useWindowDimensions();
 
     const { dataCitasvigentes } = useDataStore();
 
@@ -27,17 +29,26 @@ export const CitasCardScrollHorizontal = () => {
 
     return (
         <>
-            { dataCitasvigentes?.codigo === 101 ?
+            { dataCitasvigentes?.codigo === 101 || dataCitasvigentes === undefined ?
                 (
                     <Layout style={ citasStyles.containerCitas }>
                         <Text style={ citasStyles.titleCitas }>Tus Citas</Text>
-                        <Layout style={ citasStyles.containerCardCitas }>
-                            <Text style={{color: 'black'}}>No tiene citas vigentes</Text>
+                        <Layout style={ citasStyles.containerCardCitasDefault }>
+                            <Image
+                                source={require('../../assets/imgs/ICONCALENDAR.png')}
+                                style={{ width: 120, height: 120 }}
+                            />
+                            <Text style={{
+                                color: '#828282',
+                                width: '50%',
+                                textAlign: 'center',
+                                fontSize: 20
+                                }}>Actualmente la persona no tiene citas vigentes.</Text>
                         </Layout>
                     </Layout>
                 ) :
                 (                    
-                    <Layout style={ citasStyles.containerCitas }>
+                    <Layout style={ [citasStyles.containerCitas, { width: dataCitasvigentes?.lstcitavigente.length === 1 ? width - 40 : '100%' }] }>
                         <Text style={ citasStyles.titleCitas }>Tus Citas</Text>
                         <FlatList
                             data={dataCitasvigentes?.lstcitavigente}
@@ -45,16 +56,16 @@ export const CitasCardScrollHorizontal = () => {
                             horizontal
                             showsHorizontalScrollIndicator={false}
                             renderItem={({item}) => (
-                                <Layout style={ citasStyles.containerCardCitas }>                                
+                                <Layout style={ [citasStyles.containerCardCitas, { width: dataCitasvigentes?.lstcitavigente.length === 1 ? width - 40 : width - 70 }] }>                                
                                     <Layout style={citasStyles.containerCitasLeft}>
-                                        <Text style={citasStyles.textDetalleCita}>
-                                            <Text style={{ ...citasStyles.textDetalleCita, fontWeight: 'bold', fontSize: 17 }}>Establecimiento:</Text> {item.nombreestablecimiento}</Text>
-                                        <Text style={citasStyles.textDetalleCita}>
-                                            <Text style={{ ...citasStyles.textDetalleCita, fontWeight: 'bold', fontSize: 17 }}>Servicio:</Text> {item.nombreservicio}</Text>
-                                        <Text style={citasStyles.textDetalleCita}>
-                                            <Text style={{ ...citasStyles.textDetalleCita, fontWeight: 'bold', fontSize: 17 }}>Motivo:</Text> {item.citaMotivo}</Text>
-                                        <Text style={citasStyles.textDetalleCita}>
-                                            <Text style={{ ...citasStyles.textDetalleCita, fontWeight: 'bold', fontSize: 17 }}>Fecha:</Text> {formatDateToYearMonthDay(item.fechahoraprogramada.toString())}</Text>
+                                        <Text style={[citasStyles.textDetalleCita, {fontSize: (6 + (width * 0.015))}]}>
+                                            <Text style={{ ...citasStyles.textDetalleCita, fontWeight: 'bold', fontSize: (8 + (width * 0.015)) }}>Establecimiento:</Text> {item.nombreestablecimiento}</Text>
+                                        <Text style={[citasStyles.textDetalleCita, {fontSize: (6 + (width * 0.015))}]}>
+                                            <Text style={{ ...citasStyles.textDetalleCita, fontWeight: 'bold', fontSize: (8 + (width * 0.015)) }}>Servicio:</Text> {item.nombreservicio}</Text>
+                                        <Text style={[citasStyles.textDetalleCita, {fontSize: (6 + (width * 0.015))}]}>
+                                            <Text style={{ ...citasStyles.textDetalleCita, fontWeight: 'bold', fontSize: (8 + (width * 0.015)) }}>Motivo:</Text> {item.citaMotivo}</Text>
+                                        <Text style={[citasStyles.textDetalleCita, {fontSize: (6 + (width * 0.015))}]}>
+                                            <Text style={{ ...citasStyles.textDetalleCita, fontWeight: 'bold', fontSize: (8 + (width * 0.015)) }}>Fecha:</Text> {formatDateToYearMonthDay(item.fechahoraprogramada.toString())}</Text>
                                         <Layout style={citasStyles.citasEstatus}>
                                             <Layout style={citasStyles.shapeSpot }></Layout>
                                             <Text style={{color:'#2C338B'}}> Asignada</Text>
@@ -69,13 +80,13 @@ export const CitasCardScrollHorizontal = () => {
                                             label="Cómo llegar"
                                             buttonColor= "#265170"
                                             appearance="filled"
-                                            whithPercentaje="90%"
+                                            whithPercentaje="100%"
                                             height={50}
                                             nameIcon="arrow-forward-outline"
                                             colorIcon="color-primary-100"
                                             showIcon={false}
                                             textColor={'white'}
-                                            textSize={12}
+                                            textSize={4 + (width * 0.015)}
                                             onPress={() => {
                                                 const latitude = item.latitud; // Assuming 'latitud' is your latitude property
                                                 const longitude = item.longitud; // Assuming 'longitud' is your longitude property

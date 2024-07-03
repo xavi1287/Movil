@@ -1,9 +1,9 @@
 
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
+import MapView, { Marker, MarkerDragStartEndEvent, PROVIDER_GOOGLE } from 'react-native-maps'
 import PrimaryButton from './PrimaryButton';
 import { globalColors } from '../theme/theme';
 import { StyleSheet, View } from 'react-native';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useLocationStore } from '../../core/Infraestructura/adapters/UseLocationStore';
 
 export interface Location {
@@ -12,19 +12,18 @@ export interface Location {
 }
 
 interface Props {
-    showUserLocation?: boolean;
     initialLocation: Location
 }
 
 export const Mapa = ({
-    showUserLocation = true,
     initialLocation
 } : Props) => {
 
     const mapRef = useRef<MapView>();
     const cameraLocation = useRef<Location>( initialLocation );
+    const [latLngMarker, setLatLngMarker] = useState<Location>(initialLocation);
 
-    const { getLocation, lastKnowLocation } = useLocationStore();
+    const { getLocation, actualUserLocation, saveFinalUserLocation } = useLocationStore();
 
     const moveCameraToLocation = (location: Location) => {
         if (!mapRef.current) return;
@@ -33,21 +32,28 @@ export const Mapa = ({
 
     const moveToCurrentLocation = async() => {
 
-        if( !lastKnowLocation) {
+        if( !actualUserLocation) {
             moveCameraToLocation(initialLocation);
+            setLatLngMarker(initialLocation);
         }
 
         const location = await getLocation();        
 
         if (!location) return;
         moveCameraToLocation(location);
+        setLatLngMarker(location);
+    }
+
+    const cambiaUbicacionMarker = ( e: MarkerDragStartEndEvent ) => {
+        const ubicacion = e.nativeEvent.coordinate;
+        setLatLngMarker( ubicacion );
+        saveFinalUserLocation( ubicacion );
     }
 
     return (
         <>
             <MapView
                 ref={ map => (mapRef.current = map!) }
-                showsUserLocation={ showUserLocation }
                 provider={ PROVIDER_GOOGLE }
                 style={{ flex: 1 }}
                 region={{
@@ -57,6 +63,11 @@ export const Mapa = ({
                     longitudeDelta: 0.0121,
                 }}
             >
+                <Marker
+                    draggable
+                    coordinate={ latLngMarker }
+                    onDragEnd={ cambiaUbicacionMarker }
+                />
             </MapView>
 
             <View style={ styles.contenedorBtn } >

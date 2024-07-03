@@ -24,9 +24,18 @@ export class UseStorage {
             await AsyncStorage.removeItem(key);
 
         } catch (error) {
-            console.log(error);
+            
             throw new Error(`Error removing item ${key}`);
         }
     }
+    static async removeAll(): Promise<void> {
 
+        try {
+            await AsyncStorage.clear();
+
+        } catch (error) {
+            
+            throw new Error(`NO se puede limpiar el storage`);
+        }
+    }
 }

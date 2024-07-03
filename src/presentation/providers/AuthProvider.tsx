@@ -1,8 +1,9 @@
-import { useNavigation } from "@react-navigation/native";
+﻿import { useNavigation } from "@react-navigation/native";
 import { PropsWithChildren, useEffect } from 'react';
 import { useAuthStore } from "../../core/Infraestructura/adapters/UseAuthStore";
 import type { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParams } from '../routes/StackNavigator';
+import { UseStorage } from "../../core/Infraestructura/adapters/UseStorage";
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
 
@@ -15,12 +16,12 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     useEffect(() => {
         if (status !== 'checking') {
             if (status === 'autenticado') {
-                console.log('Aqui')
                 navigation.reset({
                     index: 0,
                     routes: [{ name: 'DrawerNavigator' }],
                 })
             } else {
+                UseStorage.removeAll();
                 navigation.reset({
                     index: 0,
                     routes: [{ name: 'LoginScreen' }],
@@ -31,7 +32,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
     return (
         <>
-            {children}
+            { children }
         </>
     )
     

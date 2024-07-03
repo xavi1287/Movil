@@ -2,7 +2,7 @@
 import { StyleSheet, View, Text, ScrollView, Pressable, TouchableOpacity } from "react-native"
 import { globalColors, globalStyles } from '../../theme/theme';
 import PrimaryButton from "../../components/PrimaryButton"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DatePicker from "react-native-date-picker";
 import { FechaInput } from "../../components/FechaInput";
 import TypeInput from "../../components/TypeInput";
@@ -19,19 +19,21 @@ import { devuelveSoloFecha, validaDatosRegistroUsuario } from "../../../shared/h
 import { RegistroRequest } from "../../../core/Dominio/GestionPersona/Request/RegistroRequest";
 import PersonaRepositorio from "../../../modules/GestionPersona/PersonaRepositorio";
 import { RootStackParams } from "../../routes/StackNavigator";
+import SeguridadRepositorio from "../../../modules/Auth/SeguridadRepositorio";
+import UbicacionRepositorio from "../../../modules/Ubicacion/UbicacionRepositorio";
 
 interface Props extends StackScreenProps<RootStackParams, 'RegistroDatosScreen'> {}
 
 export const RegistroDatosScreen = ({ navigation }:Props) => {
 
-    const { lastKnowLocation } = useLocationStore();
+    const { finalUserLocation } = useLocationStore();
     const [registroOk, setRegistroOk] = useState<Boolean>(false);
     const [openModalFecha, setOpenModalFecha] = useState(false);
     const [fecha, setFecha] = useState<FechaDatePicker>({
         dia: '01',
         mes: '09',
         anio: '1995'
-    });
+    });    
 
     const [form, setForm] = useState<RegistroForm>({
         fechaNacimiento: '',
@@ -91,9 +93,14 @@ export const RegistroDatosScreen = ({ navigation }:Props) => {
 
         setIsLoadingData( true );
 
+        const ubicacionRepositorio = new UbicacionRepositorio();
+        const ubicResp = await ubicacionRepositorio.obtenerGeolocalizacionInversa( finalUserLocation! );
+
+        const existeUbicacion: boolean = ubicResp.isSuccessful && ubicResp.data !== undefined;
+
         const persona = {
             identificacion: infoPersonaRegistro!.identificacion,
-            primerNombre: infoPersonaRegistro!.primerApellido,
+            primerNombre: infoPersonaRegistro!.primerNombre,
             segundoNombre: infoPersonaRegistro!.segundoNombre,
             primerApellido: infoPersonaRegistro!.primerApellido,
             segundoApellido: infoPersonaRegistro!.segundoApellido,
@@ -106,12 +113,12 @@ export const RegistroDatosScreen = ({ navigation }:Props) => {
             celular: form.celular,
             sesionId: 0,
             correo: form.email,
-            ciudad: "",
-            sector: "",
-            calle: "",
-            interseccion: "",
-            latitud: lastKnowLocation!.latitude.toString(),
-            longitud: lastKnowLocation!.longitude.toString(),
+            ciudad: existeUbicacion ? ubicResp.data!.ciudad : "N/A",
+            sector: existeUbicacion ? ubicResp.data!.sector : "N/A",
+            calle:  existeUbicacion ? ubicResp.data!.calle : "N/A",
+            interseccion: existeUbicacion ? ubicResp.data!.interseccion : "N/A",
+            latitud: finalUserLocation!.latitude.toString(),
+            longitud: finalUserLocation!.longitude.toString(),
             aceptaCondEnvio: form.aceptaPoliticas
         } as RegistroRequest;
 
@@ -119,15 +126,18 @@ export const RegistroDatosScreen = ({ navigation }:Props) => {
         const resp = await personaRepositorio.registroPersona( persona );
 
         if ( !resp.isSuccessful || !resp.data || resp.data.personaId <= 0 ) {
-            setMensajePopUp( resp.message );
+            setMensajePopUp('No se pudo registrar al usuario');
             setIsLoadingData( false );
             abrirModal();
             return;
         }
 
+        const seguridadRepositorio = new SeguridadRepositorio();
+        await seguridadRepositorio.enviaNotificacionUsuarioXCedula( infoPersonaRegistro!.identificacion );
+
         setMensajePopUp('A partir de este momento ya puedes acceder al agendamiento de citas médicas del Ministerio de Salud Pública del Ecuador');
         setRegistroOk( true );
-        logoutRegistro();
+        await logoutRegistro();
         setIsLoadingData( false );
         abrirModal();
 
@@ -221,7 +231,7 @@ export const RegistroDatosScreen = ({ navigation }:Props) => {
                         onChangeText={ (confirmaContrasenia) => setForm({ ...form, confirmaContrasenia })}
                     />
 
-                    <Text style={ globalStyles.secondaryText }>{JSON.stringify(form,null,2)}</Text>
+                    {/* <Text style={ globalStyles.secondaryText }>{JSON.stringify(form,null,2)}</Text> */}
 
                     <View style={ styles.contenedorPoliticas } >
 

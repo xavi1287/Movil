@@ -19,17 +19,18 @@ import { UseStorage } from "../../../core/Infraestructura/adapters/UseStorage";
 import { verificaCedula } from "../../../shared/helpers";
 import { RootStackParams } from "../../routes/StackNavigator";
 import { usePermissionStore } from "../../../core/Infraestructura/adapters/UsePermissionStore";
+import { isTokenValid } from "../../../shared/deviceInfo/ValidacionToken";
+import { UseLogStore } from "../../../core/Infraestructura/adapters/UseLogStore";
 
 interface Props extends StackScreenProps<RootStackParams, 'RegistroScreen'> {}
 
 export const RegistroScreen = ({ navigation }:Props) => {
 
-    const { height } = useWindowDimensions();
     const [cedulaUsuario, setCedulaUsuario] = useState('');
-    const { lastKnowLocation, getLocation } = useLocationStore();
+    const { actualUserLocation, getLocation } = useLocationStore();
     const { locationStatus, checkLocationPermission } = usePermissionStore();
-    const { loginRegistroState, guardarInfoPersonaRegistro, infoPersonaRegistro } = useAuthStore();
-    
+    const { loginRegistroState, guardarInfoPersonaRegistro, infoPersonaRegistro, logoutRegistro, logout } = useAuthStore();
+    const {SesionState}=UseLogStore();
     const {
         abrirModal,
         cerrarModal,
@@ -43,7 +44,7 @@ export const RegistroScreen = ({ navigation }:Props) => {
     useEffect(() => {
         verificaPermisosGeolocalizacion();
         guardarInfoPersonaRegistro();
-        if ( lastKnowLocation === null ) {
+        if ( actualUserLocation === null ) {
             getLocation();
         }
     }, [])
@@ -57,11 +58,10 @@ export const RegistroScreen = ({ navigation }:Props) => {
 
     const verificaTokenRegistro = async () => {
         const token = await UseStorage.getItem('tokenRegistro');
-        console.log(token);
-        if (!token) {
-            console.log('entro');
-            loginRegistroState();
-        }
+        if (token && isTokenValid(token)) return;
+        await logout();
+        await logoutRegistro();
+        await loginRegistroState();
     }
 
     const obtenerUsuario = async () => {
@@ -83,34 +83,42 @@ export const RegistroScreen = ({ navigation }:Props) => {
         const personaRepositorio = new PersonaRepositorio();
         const resp = await personaRepositorio.obtenerPersonaXCedula(cedulaUsuario);
         
-        if ( !resp.isSuccessful ) {
-            setMensajePopUp (resp.message );
+        if ( !resp.isSuccessful || !resp.data ) {
+            setMensajePopUp ( resp.message );
+            setIsLoadingData(false);
+            abrirModal();
+            return;
+        }
+
+        if ( !resp.data.puedeRegistrarse ) {
+            setMensajePopUp ('La persona ya se encuentra registrada, intente iniciar sesión');
             setIsLoadingData(false);
             abrirModal();
             return;
         }
 
         guardarInfoPersonaRegistro( resp.data );
+        SesionState(cedulaUsuario);
         setIsLoadingData(false);
 
     }
 
-    if( lastKnowLocation === null ) {
+    if( actualUserLocation === null ) {
         return( <LoadingScreen /> )
     }
 
     return (
         <LoadingOverlay isLoading={ isLoadingData } >
             <ScrollView contentContainerStyle= {{flexGrow: 1}}>
-                <Layout style={{ ...globalStyles.containerAzul, height: height }} >
+                <Layout style={{ ...globalStyles.containerAzul }} >
 
-                    <Layout style={{ ...styles.contenedorLogo, height: height * 0.2 }}>
+                    <Layout style={{ ...styles.contenedorLogo }}>
                         <Image
                             style={{ resizeMode: 'contain', width: 300, height: 150 }}
                             source={{ uri: IMG_LOGO_PRINCIPAL }} />
                     </Layout>
                     
-                    <Layout style={{ ...styles.contenedorPrincipal, height: height * 0.8 }} >
+                    <Layout style={{ ...styles.contenedorPrincipal }} >
 
                         <Text style={ globalStyles.titulosText }>
                             Regístrate
@@ -162,7 +170,7 @@ export const RegistroScreen = ({ navigation }:Props) => {
                         </Text>
 
                         <Layout style={ styles.contenedorMapa } >
-                            <Mapa initialLocation={ lastKnowLocation } />
+                            <Mapa initialLocation={ actualUserLocation } />
                         </Layout>
 
                         <PrimaryButton label="Continuar"
@@ -182,21 +190,12 @@ export const RegistroScreen = ({ navigation }:Props) => {
                 </Layout>
 
                 <ModalPopUp 
-                    titulo='Error'
+                    titulo='Alerta'
                     isModalVisible={ isModalVisible }
                     descripcion={ mensajePopUp }
                     onAcept={ (() => {
                         cerrarModal();
-                        console.log('Se cerro el pop up');
                     })}
-                    // onConfirm={() => {
-                    //     cerrarModal();
-                    //     console.log('Se confirmo en el pop up');
-                    // }}
-                    // onCancel={ () => {
-                    //     cerrarModal();
-                    //     console.log('Se canceló en el pop up');
-                    // }}
                 />
                 
             </ScrollView>
@@ -207,16 +206,16 @@ export const RegistroScreen = ({ navigation }:Props) => {
 
 const styles = StyleSheet.create({
     contenedorLogo: {
-        // flex: 0.6,
+        flex: 0.3,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: globalColors.background
     },
     contenedorPrincipal: {
-        // flex: 2,
+        flex: 2,
         borderTopStartRadius: 60,
         borderTopEndRadius: 60,
-        paddingHorizontal: 50,
+        paddingHorizontal: 40,
         paddingTop: 40,
         backgroundColor: globalColors.white,
     },
